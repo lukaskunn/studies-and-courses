@@ -3,69 +3,69 @@ import books from "../models/Book.js";
 class BookController {
     static listBooks = (req, res) => {
         books.find()
-            .populate('author')
+            .populate("author")
             .exec((err, books) => {
-            res.status(200).json(books)
-        })
-    }
+                res.status(200).json(books);
+            });
+    };
 
     static getBookById = (req, res) => {
-        const { id } = req.params
+        const { id } = req.params;
         books.findById(id)
-            .populate('author', 'name')
+            .populate("author", "name")
             .exec((err, book) => {
-            if (!err) {
-                res.status(200).send(book.toJSON())
-            } else {
-                res.status(400).send({ message: err.message })
-            }
-        })
-    }
+                if (!err) {
+                    res.status(200).send(book.toJSON());
+                } else {
+                    res.status(400).send({ message: err.message });
+                }
+            });
+    };
 
     static registerBook = (req, res) => {
-        let book = new books(req.body)
+        let book = new books(req.body);
 
         book.save((err) => {
             if (err) {
-                res.status(500).send({ message: `${err.message} - Error while register a new book in database` })
+                res.status(500).send({ message: `${err.message} - Error while register a new book in database` });
             } else {
-                res.status(201).send(book.toJSON())
+                res.status(201).send(book.toJSON());
             }
-        })
-    }
+        });
+    };
 
     static updateBook = (req, res) => {
-        const { id } = req.params
+        const { id } = req.params;
         books.findByIdAndUpdate(id, { $set: req.body }, (err) => {
             if (!err) {
-                res.status(200).send({ message: 'Book updated successfully!' })
+                res.status(200).send({ message: "Book updated successfully!" });
             } else {
-                res.status(500).send({ message: err.message })
+                res.status(500).send({ message: err.message });
             }
-        })
-    }
+        });
+    };
 
     static deleteBook = (req, res) => {
-        const { id } = req.params
+        const { id } = req.params;
         books.findByIdAndDelete(id, (err) => {
             if (!err) {
-                res.status(200).send({ message: 'Book deleted successfully!' })
+                res.status(200).send({ message: "Book deleted successfully!" });
             } else {
-                res.status(500).send({ message: err.message })
+                res.status(500).send({ message: err.message });
             }
-        })
-    }
+        });
+    };
 
     static listBooksByAuthor = (req, res) => {
-        const pages = req.query.pages
+        const pages = req.query.pages;
 
-        books.find({ 'pages': pages }, {})
-            .populate('author', 'name')
+        books.find({ "pages": pages }, {})
+            .populate("author", "name")
             .exec((err, books) => {
                 res.status(200).send(books);
-            })
-    }
+            });
+    };
 }
 
-export default BookController
+export default BookController;
 
