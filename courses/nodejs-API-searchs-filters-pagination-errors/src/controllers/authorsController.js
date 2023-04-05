@@ -1,55 +1,66 @@
+import mongoose from "mongoose";
 import authors from "../models/Author.js";
 
 class AuthorController {
-    static listAuthors = (req, res) => {
-        authors.find((err, authors) => {
-            res.status(200).json(authors);
-        });
+    static listAuthors = async (req, res) => {
+        try {
+            const authorsResult = await authors.find();
+            res.status(200).json(authorsResult);
+        } catch (error) {
+            res.status(500).json({ message: "Internal server error" });
+        }
     };
 
-    static getAuthorById = (req, res) => {
+    static getAuthorById = async (req, res) => {
         const { id } = req.params;
-        authors.findById(id, (err, author) => {
-            if (!err) {
-                res.status(200).send(author.toJSON());
+
+        try {
+            const authorsResult = await authors.findById(id);
+            if (authorsResult !== null) {
+                res.status(200).send(authorsResult);
             } else {
-                res.status(400).send({ message: err.message });
+                res.status(404).send({ message: "Author Id not found." });
             }
-        });
+        } catch (error) {
+            if (error instanceof mongoose.Error.CastError) {
+                res.status(400).send({ message: "One or more sent data are incorrectly." });
+            } else {
+                res.status(500).send({ message: "Internal Server Error." });
+            }
+        }
     };
 
-    static registerAuthor = (req, res) => {
+    static registerAuthor = async (req, res) => {
         let author = new authors(req.body);
 
-        author.save((err) => {
-            if (err) {
-                res.status(500).send({ message: `${err.message} - Error while register a new author in database` });
-            } else {
-                res.status(201).send(author.toJSON());
-            }
-        });
+        try {
+            const authorsResult = await author.save();
+            res.status(201).send(authorsResult);
+        } catch (error) {
+            res.status(500).send({ message: `${error.message} - Error while register a new author in database` });
+        }
     };
 
-    static updateAuthor = (req, res) => {
+    static updateAuthor = async (req, res) => {
         const { id } = req.params;
-        authors.findByIdAndUpdate(id, { $set: req.body }, (err) => {
-            if (!err) {
-                res.status(200).send({ message: "Author updated successfully!" });
-            } else {
-                res.status(500).send({ message: err.message });
-            }
-        });
+
+        try {
+            const authorsResult = await authors.findByIdAndUpdate(id, { $set: req.body });
+            res.status(200).send({ message: "Author updated successfully!", author: authorsResult });
+        } catch (error) {
+            res.status(500).send({ message: error.message });
+        }
     };
 
-    static deleteAuthor = (req, res) => {
+    static deleteAuthor = async (req, res) => {
         const { id } = req.params;
-        authors.findByIdAndDelete(id, (err) => {
-            if (!err) {
-                res.status(200).send({ message: "Author deleted successfully!" });
-            } else {
-                res.status(500).send({ message: err.message });
-            }
-        });
+
+        try {
+            await authors.findByIdAndDelete(id);
+            res.status(200).send({ message: "Author deleted successfully!" });
+        } catch (error) {
+            res.status(500).send({ message: error.message });
+        }
     };
 }
 
