@@ -12,3 +12,6 @@ Implement pagination and reuse it in different routes
 
 ### Articles
 - [Dotenv: gerenciando variáveis de ambiente](https://www.alura.com.br/artigos/dotenv-gerenciando-variaveis-ambiente#:~:text=O%20que%20é%20o%20Dotenv,-Antes%20de%20entendermos&text=Já%20que%20as%20variáveis%20de,js.)
+- [Writing middleware for use in Express apps](https://expressjs.com/en/guide/writing-middleware.html)
+- [Using middleware](https://expressjs.com/en/guide/using-middleware.html)
+- [Router](https://expressjs.com/en/api.html#router)
