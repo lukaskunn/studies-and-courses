@@ -1,3 +1,4 @@
+import NotFoundError from "../errors/NotFoundError.js";
 import authors from "../models/Author.js";
 
 class AuthorController {
@@ -19,7 +20,7 @@ class AuthorController {
             if (authorsResult !== null) {
                 res.status(200).send(authorsResult);
             } else {
-                res.status(404).send({ message: "Author Id not found." });
+                next(new NotFoundError("Author Id not found."));
             }
         } catch (error) {
             next(error);
@@ -43,7 +44,12 @@ class AuthorController {
 
         try {
             const authorsResult = await authors.findByIdAndUpdate(id, { $set: req.body });
-            res.status(200).send({ message: "Author updated successfully!", author: authorsResult });
+
+            if (authorsResult != null) {
+                res.status(200).send({ message: "Author updated successfully!", author: authorsResult });
+            } else {
+                next(new NotFoundError("Author Id not found."));
+            }
         } catch (error) {
             next(error);
             // res.status(500).send({ message: error.message });
@@ -54,8 +60,12 @@ class AuthorController {
         const { id } = req.params;
 
         try {
-            await authors.findByIdAndDelete(id);
-            res.status(200).send({ message: "Author deleted successfully!" });
+            const authorResult = await authors.findByIdAndDelete(id);
+            if (authorResult != null) {
+                res.status(200).send({ message: "Author deleted successfully!" });
+            } else {
+                next(new NotFoundError("Author Id not found."));
+            }
         } catch (error) {
             next(error);
             // res.status(500).send({ message: error.message });
