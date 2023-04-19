@@ -1,4 +1,4 @@
-import { books } from "../models/index.js";
+import { authors, books } from "../models/index.js";
 import NotFoundError from "../errors/NotFoundError.js";
 class BookController {
     static listBooks = async (req, res, next) => {
@@ -67,15 +67,41 @@ class BookController {
         }
     };
 
-    static listBooksByAuthor = async (req, res, next) => {
-        const pages = req.query.pages;
-
+    static listBooksByFilter = async (req, res, next) => {
         try {
-            const booksResult = await books.find({ "pages": pages }, {}).populate("author", "name").exec();
-            res.status(200).send(booksResult);
+            const { title, authorName, pages } = req.query;
+
+            const titleRegex = new RegExp(title, "i");
+
+            let search = {};
+
+            if (title) {
+                search.title = titleRegex;
+            }
+
+            if (pages) {
+                search.pages = pages;
+            }
+
+            if (authorName) {
+                const author = await authors.findOne({ name: authorName });
+
+                if (author !== null) {
+                    search.author = author._id;
+                } else {
+                    search = null;
+                }
+            }
+
+            if (search !== null) {
+                const booksResult = await books.find(search, {}).populate("author").exec();
+                res.status(200).send(booksResult);
+            } else {
+                res.status(200).send([]);
+            }
+
         } catch (error) {
             next(error);
-            // res.status(500).send({ message: error.message });
         }
     };
 }

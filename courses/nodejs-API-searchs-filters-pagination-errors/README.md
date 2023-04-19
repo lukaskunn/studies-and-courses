@@ -16,3 +16,4 @@ Implement pagination and reuse it in different routes
 - [Using middleware](https://expressjs.com/en/guide/using-middleware.html)
 - [Router](https://expressjs.com/en/api.html#router)
 - [Mongoose - Validation](https://mongoosejs.com/docs/validation.html)
+- [Mongoose - Query operators](https://www.mongodb.com/docs/manual/reference/operator/query/)
