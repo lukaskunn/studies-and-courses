@@ -3,8 +3,9 @@ import NotFoundError from "../errors/NotFoundError.js";
 class BookController {
     static listBooks = async (req, res, next) => {
         try {
-            const booksResult = await books.find().populate("author").exec();
-            res.status(200).json(booksResult);
+            const searchBooks = books.find();
+            req.result = searchBooks;
+            next();
         } catch (error) {
             next(error);
             // res.status(500).json({ message: "Internal server error" });
@@ -94,8 +95,9 @@ class BookController {
             }
 
             if (search !== null) {
-                const booksResult = await books.find(search, {}).populate("author").exec();
-                res.status(200).send(booksResult);
+                const booksResult = books.find(search, {}).populate("author");
+                req.result = booksResult;
+                next();
             } else {
                 res.status(200).send([]);
             }
