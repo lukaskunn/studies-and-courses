@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
-from django.contrib import auth
+from django.contrib import auth, messages
 from usuarios.forms import LoginForms, CadastroForms
 
 def login(request):
@@ -17,8 +17,10 @@ def login(request):
             )
             if usuario is not None:
                 auth.login(request, usuario)
+                messages.success(request, f"{nome} Logado com sucesso")
                 return redirect('index')
             else: 
+                messages.error(request, "Erro ao efetuar Login")
                 return redirect('login')
     
     return render(request, "usuarios/login.html", {"form": form})
@@ -30,7 +32,11 @@ def cadastro(request):
         form = CadastroForms(request.POST) 
                
         if form.is_valid():
-            if form['senha_cadastro'].value() !=  form['confirmar_senha_cadastro'].value() or User.objects.filter(username=form['nome_cadastro'].value()).exists():
+            if form['senha_cadastro'].value() !=  form['confirmar_senha_cadastro'].value():
+                messages.error(request, "As senhas nao sao as mesmas")
+                
+            if User.objects.filter(username=form['nome_cadastro'].value()).exists():
+                messages.error(request, "Usuario ja cadastrado com esse nome")
                 return redirect('cadastro') 
             
             User.objects.create_user(
@@ -39,7 +45,14 @@ def cadastro(request):
                 password = form['senha_cadastro'].value()
             ).save()
             
+            messages.success(request, "Usuario cadastrado com sucesso")
             return redirect('login')
             
             
     return render(request, "usuarios/cadastro.html", {"form": form})
+
+
+def logout(request):
+    auth.logout(request)
+    messages.success(request, "Logout efetuado com sucesso")
+    return redirect("login")
