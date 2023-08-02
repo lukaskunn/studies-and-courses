@@ -17,7 +17,7 @@ def login(request):
             )
             if usuario is not None:
                 auth.login(request, usuario)
-                messages.success(request, f"{nome} Logado com sucesso")
+                messages.success(request, f"{form['nome_login'].value()} Logado com sucesso")
                 return redirect('index')
             else: 
                 messages.error(request, "Erro ao efetuar Login")
@@ -32,9 +32,6 @@ def cadastro(request):
         form = CadastroForms(request.POST) 
                
         if form.is_valid():
-            if form['senha_cadastro'].value() !=  form['confirmar_senha_cadastro'].value():
-                messages.error(request, "As senhas nao sao as mesmas")
-                
             if User.objects.filter(username=form['nome_cadastro'].value()).exists():
                 messages.error(request, "Usuario ja cadastrado com esse nome")
                 return redirect('cadastro') 
