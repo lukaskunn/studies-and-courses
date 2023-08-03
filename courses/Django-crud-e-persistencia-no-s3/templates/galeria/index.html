@@ -1,9 +1,9 @@
-{% extends 'galeria/base.html' %}
+{% extends 'shared/base.html' %}
 {% load static %}
 {% block content %}
     <div class="pagina-inicial">
         <main class="principal">
-            {% include 'galeria/partials/_navbar.html' %}
+            {% include 'partials/_navbar.html' %}
             <section class="conteudo">
                 <section class="banner">
                     <img class="banner__imagem" src=" {% static '/assets/imagens/Banner(2).png'%}" alt="banner Alura Space">
@@ -25,7 +25,7 @@
                         <ul class="cards__lista">
                             {% if cards %}
                             {% for fotografia in cards %}
-                            <li class="card">
+                            <li class="card-important">
                                 <a href="{% url 'imagem' fotografia.id %}">
                                     {% if fotografia.foto == "" or fotografia.foto == null %}
                                     <img class="card__imagem" src=" {% static '/assets/imagens/galeria/not_found.png'%}" alt="foto">
